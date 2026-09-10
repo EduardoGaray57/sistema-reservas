@@ -49,7 +49,16 @@ model Booking {
 
   resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
 
-  @@unique([resourceId, startTime])
+  // Business rule: at most one ACTIVE (CONFIRMED) booking per
+  // (resourceId, startTime). Prisma cannot express a partial unique index,
+  // so it lives as raw SQL in prisma/partial-unique-bookings.sql and is
+  // applied after every `prisma db push`.
+  //   CREATE UNIQUE INDEX "bookings_resourceId_startTime_confirmed_uq"
+  //     ON "bookings" ("resourceId", "startTime")
+  //     WHERE "status" = 'CONFIRMED';
+  // Keep the plain index below for overlap lookups; do NOT restore a
+  // status-blind @@unique([resourceId, startTime]) — it breaks re-booking
+  // a cancelled slot.
   @@index([resourceId, startTime])
   @@index([guestEmail])
   @@map("bookings")
