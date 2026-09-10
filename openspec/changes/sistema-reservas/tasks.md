@@ -58,10 +58,10 @@ Chain strategy: pending
 
 ## Phase 4: Backend — Bookings Module
 
-- [ ] 4.1 Create `apps/api/src/bookings/dto/create-booking.dto.ts` — resourceId, startTime, guestName, guestEmail with validation
-- [ ] 4.2 Create `apps/api/src/bookings/bookings.service.ts` — availability check → Prisma insert → 409 on unique violation → fire-and-forget email call
-- [ ] 4.3 Create `apps/api/src/bookings/bookings.controller.ts` — GET (list by resourceId+date), POST (create), PATCH /:id/cancel
-- [ ] 4.4 Create `apps/api/src/bookings/bookings.module.ts`
+- [x] 4.1 Create `apps/api/src/bookings/dto/create-booking.dto.ts` — resourceId, startTime, guestName, guestEmail with validation
+- [x] 4.2 Create `apps/api/src/bookings/bookings.service.ts` — availability check → Prisma insert → 409 on unique violation → fire-and-forget email call
+- [x] 4.3 Create `apps/api/src/bookings/bookings.controller.ts` — GET (list by resourceId+date), POST (create), PATCH /:id/cancel
+- [x] 4.4 Create `apps/api/src/bookings/bookings.module.ts`
 
 ## Phase 5: Backend — Email + Common
 
