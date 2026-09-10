@@ -52,9 +52,9 @@ Chain strategy: pending
 
 ## Phase 3: Backend — Availability Module
 
-- [ ] 3.1 Create `apps/api/src/availability/availability.service.ts` — slot generation algorithm (load schedule → generate candidates → subtract bookings/blocks)
-- [ ] 3.2 Create `apps/api/src/availability/availability.controller.ts` — GET /api/resources/:id/availability?date=
-- [ ] 3.3 Create `apps/api/src/availability/availability.module.ts`
+- [x] 3.1 Create `apps/api/src/availability/availability.service.ts` — slot generation algorithm (load schedule → generate candidates → subtract bookings/blocks)
+- [x] 3.2 Create `apps/api/src/availability/availability.controller.ts` — GET /api/resources/:id/availability?date=
+- [x] 3.3 Create `apps/api/src/availability/availability.module.ts`
 
 ## Phase 4: Backend — Bookings Module
 
