@@ -66,16 +66,18 @@ Cumulative across batches. All completed tasks are marked `[x]` in
 
 ## Status
 
-25/45 tasks complete. Ready for next batch (Phase 6: Frontend foundation, PR 7+).
+28/45 tasks complete. Ready for next batch (Phase 6: Frontend foundation, PR 7+).
 
 ## Workload / PR Boundary
 
 - Mode: chained PR slice (stacked-to-main).
 - Current work unit: `email-common-pr6` (attempt token `sha256:db29e616a4882f019651eeeedcf49d254c95d53059e4f8403e62a6884b45d2c4`).
 - Boundary: starts at `origin/main` (PRs #1–#5 merged), ends at Phase 5 tasks complete.
-- Authored changed lines: 699 (177 tracked changes + 522 new-file lines; generated
-  `pnpm-lock.yaml` 511 excluded from the count). Over the 400 budget → commits are
-  grouped so the batch can land as TWO chained PRs under budget:
+- Authored changed lines: 661 code/config (343 in the shared slice + 318 in the API
+  slice; `booking-notification.interface.ts` counted as a move, 8 changed lines;
+  generated `pnpm-lock.yaml` 511 excluded from the count). Docs artifacts add 93
+  more. Over the 400 budget → commits are grouped so the batch can land as TWO
+  chained PRs under budget:
   - PR 6a — shared unit: 343 lines (`packages/shared/*`, root postinstall, lockfile).
-  - PR 6b — API unit: 356 lines (email + common infra + tsconfig fix). Recommended
-    unless the maintainer prefers a single `size:exception` PR 6 (699 lines).
+  - PR 6b — API unit: 318 lines (email + common infra + tsconfig fix). Recommended
+    unless the maintainer prefers a single `size:exception` PR 6 (661 code lines).
