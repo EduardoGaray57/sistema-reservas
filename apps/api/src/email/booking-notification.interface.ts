@@ -11,10 +11,10 @@ export interface BookingNotificationData {
 /**
  * Abstraction for sending booking notifications (e.g., confirmation emails).
  *
- * PR 5 (tasks 5.3–5.4) replaces the default log-only provider with a real
- * Resend-backed implementation. The booking service only depends on this
- * token, so the swap is limited to the provider registration in
- * `bookings.module.ts`.
+ * The booking service only depends on this token, so swapping the
+ * implementation is limited to provider registration. Implementations:
+ * - PR 4: log-only provider in `bookings.module.ts`
+ * - PR 6: Resend-backed `EmailService` (see `email/email.service.ts`)
  */
 export interface BookingNotificationSender {
   sendConfirmation(data: BookingNotificationData): Promise<void>;

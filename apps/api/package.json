@@ -7,6 +7,7 @@
     "build": "nest build",
     "start": "node dist/main",
     "start:prod": "node dist/main",
+    "test:emails": "tsx scripts/emails.smoke.ts",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "prisma": "prisma",
     "seed": "tsx prisma/seed.ts"
@@ -17,9 +18,11 @@
     "@nestjs/mapped-types": "^12.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@prisma/client": "^6.0.0",
+    "@sistema-reservas/shared": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "reflect-metadata": "^0.2.2",
+    "resend": "^6.27.0",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
