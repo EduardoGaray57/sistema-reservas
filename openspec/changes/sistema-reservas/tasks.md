@@ -65,12 +65,12 @@ Chain strategy: pending
 
 ## Phase 5: Backend — Email + Common
 
-- [ ] 5.1 Create `packages/shared/src/emails/BookingConfirmation.tsx` — React Email template
-- [ ] 5.2 Create `packages/shared/src/emails/BookingCancellation.tsx` — React Email template
-- [ ] 5.3 Create `apps/api/src/email/email.service.ts` — Resend SDK send, fire-and-forget wrapper
-- [ ] 5.4 Create `apps/api/src/email/email.module.ts`
-- [ ] 5.5 Create `apps/api/src/common/filters/http-exception.filter.ts`
-- [ ] 5.6 Register ExceptionFilter and ValidationPipe globally in `app.module.ts`
+- [x] 5.1 Create `packages/shared/src/emails/BookingConfirmation.tsx` — React Email template
+- [x] 5.2 Create `packages/shared/src/emails/BookingCancellation.tsx` — React Email template
+- [x] 5.3 Create `apps/api/src/email/email.service.ts` — Resend SDK send, fire-and-forget wrapper
+- [x] 5.4 Create `apps/api/src/email/email.module.ts`
+- [x] 5.5 Create `apps/api/src/common/filters/http-exception.filter.ts`
+- [x] 5.6 Register ExceptionFilter and ValidationPipe globally in `app.module.ts`
 
 ## Phase 6: Frontend — Foundation
 
