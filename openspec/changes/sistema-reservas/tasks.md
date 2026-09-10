@@ -42,13 +42,13 @@ Chain strategy: pending
 
 ## Phase 2: Backend — Resources Module
 
-- [ ] 2.1 Create `apps/api/src/main.ts` — NestJS bootstrap with global ValidationPipe
-- [ ] 2.2 Create `apps/api/src/app.module.ts` — register ResourcesModule + future modules
-- [ ] 2.3 Create `apps/api/src/resources/dto/create-resource.dto.ts` — class-validator decorators
-- [ ] 2.4 Create `apps/api/src/resources/dto/update-resource.dto.ts` — PartialType of create
-- [ ] 2.5 Create `apps/api/src/resources/resources.service.ts` — CRUD with PrismaClient
-- [ ] 2.6 Create `apps/api/src/resources/resources.controller.ts` — GET/POST/PATCH/DELETE endpoints
-- [ ] 2.7 Create `apps/api/src/resources/resources.module.ts`
+- [x] 2.1 Create `apps/api/src/main.ts` — NestJS bootstrap with global ValidationPipe
+- [x] 2.2 Create `apps/api/src/app.module.ts` — register ResourcesModule + future modules
+- [x] 2.3 Create `apps/api/src/resources/dto/create-resource.dto.ts` — class-validator decorators
+- [x] 2.4 Create `apps/api/src/resources/dto/update-resource.dto.ts` — PartialType of create
+- [x] 2.5 Create `apps/api/src/resources/resources.service.ts` — CRUD with PrismaClient
+- [x] 2.6 Create `apps/api/src/resources/resources.controller.ts` — GET/POST/PATCH/DELETE endpoints
+- [x] 2.7 Create `apps/api/src/resources/resources.module.ts`
 
 ## Phase 3: Backend — Availability Module
 
