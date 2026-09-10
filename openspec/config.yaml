@@ -1,0 +1,49 @@
+# SDD configuration for sistema-reservas
+schema: spec-driven
+
+context: |
+  Greenfield booking/reservation system ("sistema-reservas").
+  Intended scope: backend (FastAPI or Node.js), relational database
+  (PostgreSQL or SQLite), calendar availability, booking with email
+  confirmation, time slot blocking, and an admin panel.
+  At init time the repo has no commits and no code: stack, architecture,
+  and testing tooling are undetected and must be decided before apply.
+
+# Zero project markers discovered at init (empty repo) and no workspace-level
+# test command exists, so Strict TDD fails closed to false. Re-evaluate once
+# code and a test runner land; set to true only when one workspace-level
+# test command covers every in-scope project.
+strict_tdd: false
+
+projects: []
+
+# Detected: none (greenfield). Re-verified when code lands.
+testing:
+  detected: 2026-09-10
+  layers: {}
+  coverage: {}
+  quality: {}
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    guidelines:
+      - Follow existing code patterns once the stack lands
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: ""
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
