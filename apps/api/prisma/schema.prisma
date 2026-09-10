@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Resource {
+  id                  String     @id @default(cuid())
+  name                String
+  description         String?
+  slotDurationMinutes Int        @default(30)
+  timezone            String     @default("America/Argentina/Buenos_Aires")
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  schedules   Schedule[]
+  bookings    Booking[]
+  blockedTimes BlockedTime[]
+
+  @@map("resources")
+}
+
+model Schedule {
+  id         String   @id @default(cuid())
+  resourceId String
+  dayOfWeek  Int      // 0=Sunday .. 6=Saturday
+  startTime  String   // "09:00" — stored as HH:mm in resource timezone
+  endTime    String   // "17:00"
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, dayOfWeek])
+  @@index([resourceId])
+  @@map("schedules")
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  resourceId String
+  startTime  DateTime
+  endTime    DateTime
+  guestName  String
+  guestEmail String
+  status     BookingStatus @default(CONFIRMED)
+  createdAt  DateTime @default(now())
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, startTime])
+  @@index([resourceId, startTime])
+  @@index([guestEmail])
+  @@map("bookings")
+}
+
+model BlockedTime {
+  id         String   @id @default(cuid())
+  resourceId String
+  startTime  DateTime
+  endTime    DateTime
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId, startTime, endTime])
+  @@map("blocked_times")
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
