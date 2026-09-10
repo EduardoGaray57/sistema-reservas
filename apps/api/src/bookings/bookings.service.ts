@@ -10,7 +10,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import {
   BOOKING_NOTIFICATION_SENDER,
   BookingNotificationSender,
-} from './booking-notification.interface';
+} from '../email/booking-notification.interface';
 
 @Injectable()
 export class BookingsService {
