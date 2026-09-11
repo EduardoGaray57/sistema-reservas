@@ -1,8 +1,10 @@
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
+import Home from "@/routes/Home";
+
 /**
- * Application routing shell. The real pages (resource directory, booking
- * flow) replace the placeholders in subsequent work units.
+ * Application routing. The `/` route renders the resource directory; the
+ * booking flow replaces the placeholder in a later work unit.
  */
 export default function App() {
   return (
@@ -16,14 +18,7 @@ export default function App() {
           </header>
           <main className="flex-1 py-6">
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <p className="text-muted-foreground">
-                    Resource directory landing here in a later work unit.
-                  </p>
-                }
-              />
+              <Route path="/" element={<Home />} />
               <Route
                 path="/book/:id"
                 element={
