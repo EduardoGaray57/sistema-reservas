@@ -74,22 +74,22 @@ Chain strategy: pending
 
 ## Phase 6: Frontend — Foundation
 
-- [ ] 6.1 Create `apps/web/index.html`, `apps/web/tailwind.config.ts`, `apps/web/components.json`
-- [ ] 6.2 Create `apps/web/src/main.tsx` — React entry + QueryClientProvider
-- [ ] 6.3 Create `apps/web/src/lib/api-client.ts` — typed fetch wrapper for all API endpoints
-- [ ] 6.4 Create `apps/web/src/types/index.ts` — Resource, Booking, Slot, AvailabilityResponse
-- [ ] 6.5 Create `apps/web/src/lib/utils.ts` — date formatting helpers
-- [ ] 6.6 Initialize shadcn/ui (`npx shadcn@latest init`), install Calendar + Button + Card + Input components
+- [x] 6.1 Create `apps/web/index.html`, `apps/web/tailwind.config.ts`, `apps/web/components.json`
+- [x] 6.2 Create `apps/web/src/main.tsx` — React entry + QueryClientProvider
+- [x] 6.3 Create `apps/web/src/lib/api-client.ts` — typed fetch wrapper for all API endpoints
+- [x] 6.4 Create `apps/web/src/types/index.ts` — Resource, Booking, Slot, AvailabilityResponse
+- [x] 6.5 Create `apps/web/src/lib/utils.ts` — date formatting helpers
+- [x] 6.6 shadcn/ui primitives installed (`pnpm dlx shadcn@latest add button card input calendar -y`; components.json hand-written in 6.1)
 
 ## Phase 7: Frontend — Pages
 
-- [ ] 7.1 Create `apps/web/src/App.tsx` — React Router with routes for / and /book/:id
-- [ ] 7.2 Create `apps/web/src/routes/Home.tsx` — resource list using ResourceCard grid + React Query
-- [ ] 7.3 Create `apps/web/src/components/ResourceCard.tsx` — resource summary card with link to /book/:id
-- [ ] 7.4 Create `apps/web/src/routes/BookingPage.tsx` — date picker + TimeSlotPicker + BookingForm
-- [ ] 7.5 Create `apps/web/src/components/CalendarView.tsx` — shadcn Calendar wired to availability query
-- [ ] 7.6 Create `apps/web/src/components/TimeSlotPicker.tsx` — grid of slots from availability API
-- [ ] 7.7 Create `apps/web/src/components/BookingForm.tsx` — guestName + email form, POST mutation with React Query
+- [x] 7.1 Create `apps/web/src/App.tsx` — React Router with routes for / and /book/:id
+- [x] 7.2 Create `apps/web/src/routes/Home.tsx` — resource list using ResourceCard grid + React Query
+- [x] 7.3 Create `apps/web/src/components/ResourceCard.tsx` — resource summary card with link to /book/:id
+- [x] 7.4 Create `apps/web/src/routes/BookingPage.tsx` — date picker + TimeSlotPicker + BookingForm
+- [x] 7.5 Create `apps/web/src/components/CalendarView.tsx` — shadcn Calendar wired to availability query
+- [x] 7.6 Create `apps/web/src/components/TimeSlotPicker.tsx` — grid of slots from availability API
+- [x] 7.7 Create `apps/web/src/components/BookingForm.tsx` — guestName + email form, POST mutation with React Query
 
 ## Phase 8: Testing
 
