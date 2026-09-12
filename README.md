@@ -120,6 +120,3 @@ Transport resolution (per send, logged by the API): **SMTP** (`MAIL_HOST` + `MAI
 - In `apps/api/.env`: `MAIL_HOST=127.0.0.1`, `MAIL_PORT=1025`. Emails then land in the Mailpit UI, and the API logs `Confirmation email sent to <to> via SMTP`.
 - With no transport vars set, the API logs the degraded-mode line but the booking request is never affected.
 
-## Design documentation
-
-The system was built from OpenSpec change proposals; see `openspec/specs/` for the base specs (`availability-calendar`, `booking`, `email-notifications`, `resource-management`) and `openspec/changes/archive/2026-09-12-sistema-reservas/` for the full proposal, design, verification report, and task history.
