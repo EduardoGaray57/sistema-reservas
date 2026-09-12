@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 import { renderBookingConfirmation } from '@sistema-reservas/shared';
 import { PrismaService } from '../prisma.service';
@@ -10,7 +11,12 @@ import {
 const DEFAULT_EMAIL_FROM = 'noreply@resend.dev';
 
 /**
- * Resend-backed booking notification sender.
+ * Booking notification sender backed by local SMTP (Mailpit) or Resend.
+ *
+ * Transport resolution order:
+ *  1. SMTP locally if MAIL_HOST + MAIL_PORT are set (dev: Mailpit).
+ *  2. Resend if RESEND_API_KEY is set.
+ *  3. Degraded mode: skip with a logged notice.
  *
  * Fire-and-forget by contract: every failure path logs and returns instead of
  * throwing, so an email outage can never fail the booking request. Env vars
@@ -24,11 +30,14 @@ export class EmailService implements BookingNotificationSender {
   constructor(private readonly prisma: PrismaService) {}
 
   async sendConfirmation(data: BookingNotificationData): Promise<void> {
+    const smtpHost = process.env.MAIL_HOST;
+    const smtpPortRaw = process.env.MAIL_PORT;
     const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      // Degraded mode: no key configured — skip instead of failing the booking.
+
+    if (!smtpHost && !smtpPortRaw && !apiKey) {
+      // Degraded mode: no transport configured — skip instead of failing the booking.
       this.logger.log(
-        'RESEND_API_KEY not set — skipping confirmation email (degraded mode)',
+        'No mail transport configured (MAIL_HOST/MAIL_PORT or RESEND_API_KEY) — skipping confirmation email (degraded mode)',
       );
       return;
     }
@@ -52,27 +61,45 @@ export class EmailService implements BookingNotificationSender {
       timezone: resource.timezone,
     });
 
+    const from = process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM;
+    const to = data.guestEmail;
+    const subject = `Booking confirmed — ${resource.name}`;
+
     try {
-      const resend = new Resend(apiKey);
+      if (smtpHost && smtpPortRaw) {
+        const smtpPort = Number(smtpPortRaw);
+        const transport = nodemailer.createTransport({
+          host: smtpHost,
+          port: smtpPort,
+          secure: false, // local dev SMTP (Mailpit) has no TLS
+        });
+        const info = await transport.sendMail({ from, to, subject, html });
+        this.logger.log(
+          `Confirmation email sent to ${to} via SMTP (messageId=${info.messageId})`,
+        );
+        return;
+      }
+
+      const resend = new Resend(apiKey as string);
       const { data: sent, error } = await resend.emails.send({
-        from: process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM,
-        to: data.guestEmail,
-        subject: `Booking confirmed — ${resource.name}`,
+        from,
+        to,
+        subject,
         html,
       });
 
       if (error) {
         this.logger.error(
-          `Resend rejected confirmation email for ${data.guestEmail}: ${error.message}`,
+          `Resend rejected confirmation email for ${to}: ${error.message}`,
         );
         return;
       }
       this.logger.log(
-        `Confirmation email sent to ${data.guestEmail} (id=${sent?.id})`,
+        `Confirmation email sent to ${to} (id=${sent?.id})`,
       );
     } catch (err) {
       this.logger.error(
-        `Confirmation email failed for ${data.guestEmail}: ${
+        `Confirmation email failed for ${to}: ${
           err instanceof Error ? err.message : String(err)
         }`,
       );
