@@ -1,4 +1,4 @@
-# Apply Progress — Sistema de Reservas — PR 7 (Phases 6–7: Frontend)
+# Apply Progress — Sistema de Reservas — PR 8 (Phase 8: Testing)
 
 Cumulative across batches. All completed tasks are marked `[x]` in
 `openspec/changes/sistema-reservas/tasks.md`.
@@ -54,6 +54,18 @@ Cumulative across batches. All completed tasks are marked `[x]` in
     loading/error/empty states.
   - [x] 7.7 `src/components/BookingForm.tsx` — name + email form, POST mutation with React
     Query, controlled error display.
+- Phase 8 (PR 8, this batch) — tasks 8.1–8.4, testing:
+  - [x] 8.1 `apps/api/src/availability/availability.service.spec.ts` — unit tests: slot
+    stepping, booking overlap, blocked-time overlap, no-schedule day, unknown resource 404.
+  - [x] 8.2 `apps/api/src/bookings/bookings.service.spec.ts` — unit tests: endTime math,
+    async email fire-and-forget (failure never blocks booking), 409 on overlap/blocked/
+    P2002 race, 404 on unknown resource.
+  - [x] 8.3 `apps/api/test/resources.e2e-spec.ts` — Supertest CRUD against real test DB:
+    POST 201 (defaults), POST empty 400, GET list/id 200, GET unknown 404, PATCH 200,
+    DELETE 204 then 404, availability 400 on missing date.
+  - [x] 8.4 `apps/api/test/bookings.e2e-spec.ts` — full flow: availability shows slot,
+    POST 201 CONFIRMED, double-book 409, availability shows slot taken, list 200, cancel
+    200 CANCELLED + slot freed, re-book 201, invalid body 400, unknown resource 404.
 
 ## Work Unit Evidence (Phase 5)
 
@@ -70,6 +82,14 @@ Cumulative across batches. All completed tasks are marked `[x]` in
 | Focused test command and exact result | `pnpm --dir apps/web build` (script: `tsc --noEmit && vite build`) → clean; `vite v6.4.3` built `dist/` in ~7s, 2993 modules transformed, CSS 24.42 kB / JS 459.22 kB (gzip 144.31 kB). Run after EVERY slice commit (5/5 green) |
 | Runtime harness command/scenario and exact result | API (`node dist/main`, port 3000) + Vite dev server (port 5173, `/api` proxy) running. `curl.exe` checks: `/` 200 (SPA html); `/book/:id` 200 (client-route fallback); `/src/routes/BookingPage.tsx` and `/src/components/CalendarView.tsx` module transforms 200; `GET /api/resources` via proxy → 2 seeded resources. Full booking round-trip via PS `Invoke-RestMethod` through the proxy: POST `{resourceId, startTime, guestName, guestEmail}` → 201 `CONFIRMED` (id `cmtxfkq680003ur5wb0o0ymoq`); PATCH `/api/bookings/:id/cancel` → `CANCELLED`; availability endpoint then shows the slot `available: true` again. Web.data state clean (no leftover confirmed bookings) |
 | Rollback boundary | `apps/web/` + root `package.json` (postinstall) + `pnpm-lock.yaml` — the whole unit reverts without touching `apps/api/` or `packages/shared/`; slice commits already separate foundation/data/primitives (d08b114, d581f0c, 984b3d7) from pages (c2ebc9a, 84eac89) |
+
+## Work Unit Evidence (Phase 8)
+
+| Evidence | Required value |
+|---|---|
+| Focused test command and exact result | `pnpm --dir apps/api test` → 2 suites passed, **13/13 tests** (availability.service.spec 6, bookings.service.spec 7); `pnpm --dir apps/api test:e2e` → 2 suites passed, **16/16 tests** (resources 7, bookings 9), ~5s. `pnpm --dir apps/api build` → clean after dep pin |
+| Runtime harness command/scenario and exact result | E2E boots the full `AppModule` (global ValidationPipe + exception filter) via `Test.createTestingModule` against the real local PG 5435 test DB; PrismaService auto-loads `apps/api/.env` (zero seams, verified by a connectivity probe: `CONNECT_OK`, 2 seeded resources). Each spec creates its own resources and cleans up via `prisma.resource.deleteMany` (cascade removes schedules/bookings/blocked times). Full booking flow proven: availability shows slot → POST 201 CONFIRMED → duplicate POST 409 → availability shows slot taken → list 200 → cancel 200 → slot free again → re-book 201. Server log during bookings e2e: `[Bookings] Confirmation email failed (booking kept): TypeError: ... ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG` — expected: react-email render uses dynamic import that Jest's VM can't load without `--experimental-vm-modules`; the fire-and-forget path absorbs it and the booking is kept (this is the failure-mode test proving the design contract) |
+| Rollback boundary | Test files only + `apps/api/package.json` (scripts `test`/`test:e2e` + devDeps jest/ts-jest/@types/jest/supertest/@types/supertest/@nestjs/testing) + 2 jest configs + `@nestjs/mapped-types` version pin. Zero production source changes; `apps/api/` src untouched |
 
 ## Findings / Issues
 
@@ -102,9 +122,32 @@ Cumulative across batches. All completed tasks are marked `[x]` in
   `--filter` broken); vite must run via `apps/web/node_modules/vite/bin/vite.js` (no hoisted
   root symlink under strict pnpm); `pnpm exec shadcn` can't fetch package specs —
   `pnpm dlx shadcn@latest` works.
+- **`@nestjs/mapped-types@12` is ESM-only** (`"type": "module"`, main `dist/index.js`,
+  `export *` syntax) — it broke Jest 29's CJS runtime with `Unexpected token 'export'`
+  while importing `PartialType` in `update-resource.dto.ts`. Production ran only because
+  Node ≥22.12 supports `require(esm)`. Pegged to `@nestjs/mapped-types@^2.0.6` (the CJS
+  major Nest 11 pairs with) — same `PartialType` API, prod build still clean, Jest loads
+  it. This is the only dependency change in the batch.
+- E2E specs skip `NestFactory.create` — `Test.createTestingModule` + `app.init()` applies
+  the same global ValidationPipe/exception filter because they're registered via
+  `APP_PIPE`/`APP_FILTER` in `app.module.ts`.
+- Resource "defaults" from the API are the Prisma schema defaults: a POST with only
+  `name` returns `slotDurationMinutes: 30` (not 60) — `resources.service.ts` stores DTO
+  values as-is and lets Prisma fill schema defaults.
+- PowerShell 5.1 also mangles `node -e` argument quoting beyond repair (single-quoted JS
+  passed as a native arg loses quotes → `SyntaxError`); any Node probe must be a temp
+  `.cjs` file placed inside the pnpm workspace `node_modules` dirs (module resolution
+  follows the script path, not the cwd; `%TEMP%` scripts hit `MODULE_NOT_FOUND`).
 
 ## Deviations from Design
 
+- **Version pin (test-enabling)**: `@nestjs/mapped-types` moved from `^12.0.0` to
+  `^2.0.6` in `apps/api/package.json` — v12 ships ESM-only and cannot load under the
+  Jest 29 CJS runtime; v2 is the CJS major Nest 11 pairs with and exposes the same
+  `PartialType` API used by `update-resource.dto.ts`. No app source changed; `nest build`
+  verified clean.
+- **PR numbering**: tasks.md Work Units table labels this unit "PR 8", and this batch is
+  PR 8 in the chain (branch follows actual PR chain, stacked-to-main; PRs #1–#7 merged).
 - **PR numbering**: tasks.md Work Units table labels this unit "PR 5", but
   `feat/fix-rebook-schema` consumed GitHub PR #5; this batch is PR #6. Branch
   `feat/pr-6-email` follows the actual PR chain (stacked-to-main; PRs #1–#5 merged).
@@ -131,21 +174,19 @@ Cumulative across batches. All completed tasks are marked `[x]` in
 
 ## Status
 
-41/45 tasks complete. Ready for next batch (Phase 8: Integration tests, PR 8).
+45/45 tasks complete. All phases done (1–8).
 
 ## Workload / PR Boundary
 
 - Mode: chained PR slice (stacked-to-main).
-- Current work unit: `email-common-pr6` (attempt token `sha256:db29e616a4882f019651eeeedcf49d254c95d53059e4f8403e62a6884b45d2c4`).
-- Boundary: starts at `origin/main` (PRs #1–#5 merged), ends at Phase 5 tasks complete.
-- Authored changed lines: 661 code/config (343 in the shared slice + 318 in the API
-  slice; `booking-notification.interface.ts` counted as a move, 8 changed lines;
-  generated `pnpm-lock.yaml` 511 excluded from the count). Docs artifacts add 93
-  more. Over the 400 budget → commits are grouped so the batch can land as TWO
-  chained PRs under budget:
-  - PR 6a — shared unit: 343 lines (`packages/shared/*`, root postinstall, lockfile).
-  - PR 6b — API unit: 318 lines (email + common infra + tsconfig fix). Recommended
-    unless the maintainer prefers a single `size:exception` PR 6 (661 code lines).
+- Current work unit: `testing-pr8` (attempt token `sha256:1b73c162e00e6573a2a347af3f08a9ae8011e34e143bca7e207732665c4bc23f`).
+- Boundary: Phase 8 tasks complete. Tests/config only + the mapped-types version pin;
+  no production source changes.
+- Authored changed lines: see `git diff --stat` at hand-off (test files + 2 jest configs +
+  package.json scripts/devDeps + mapped-types pin; docs artifacts add more). Over the
+  400 budget → commits grouped so the batch can land either as ONE `size:exception` PR 8
+  or split at the unit-spec / e2e-spec seam (unit: jest.config.json + 2 spec files;
+  e2e: test/jest-e2e.json + 2 e2e spec files; shared: package.json scripts/devDeps + pins).
 
 ### Work unit: `frontend-pr7` (this batch)
 
