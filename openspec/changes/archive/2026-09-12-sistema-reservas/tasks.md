@@ -93,7 +93,7 @@ Chain strategy: pending
 
 ## Phase 8: Testing
 
-- [ ] 8.1 Unit test: `apps/api/src/availability/availability.service.spec.ts` — slot math with various schedules, booking overlaps, blocked time overlaps
-- [ ] 8.2 Unit test: `apps/api/src/bookings/bookings.service.spec.ts` — conflict detection returns 409, success path returns booking, email fires async
-- [ ] 8.3 Integration test: `apps/api/test/resources.e2e-spec.ts` — POST/GET/PATCH/DELETE via Supertest against test DB
-- [ ] 8.4 Integration test: `apps/api/test/bookings.e2e-spec.ts` — full booking flow, double-booking returns 409, availability shows slot as taken
+- [x] 8.1 Unit test: `apps/api/src/availability/availability.service.spec.ts` — slot math with various schedules, booking overlaps, blocked time overlaps
+- [x] 8.2 Unit test: `apps/api/src/bookings/bookings.service.spec.ts` — conflict detection returns 409, success path returns booking, email fires async
+- [x] 8.3 Integration test: `apps/api/test/resources.e2e-spec.ts` — POST/GET/PATCH/DELETE via Supertest against test DB
+- [x] 8.4 Integration test: `apps/api/test/bookings.e2e-spec.ts` — full booking flow, double-booking returns 409, availability shows slot as taken
