@@ -57,12 +57,18 @@ export default function BookingPage() {
     enabled: Boolean(id && selectedDate),
   });
 
+  // Stable booking window anchored to today in the resource timezone. It
+  // must NOT depend on the selected date: anchoring to the selection makes
+  // the range "slide" after each pick (picking day 20 disables every day
+  // before it, including days the user already saw as available).
   const dateRange = useMemo(() => {
-    const today = selectedDate ? selectableDate(selectedDate) : new Date();
+    const today = resource
+      ? selectableDate(todayInTimezone(resource.timezone))
+      : new Date();
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 60);
     return { fromDate: today, toDate: maxDate };
-  }, [selectedDate]);
+  }, [resource]);
 
   function handleBooked(newBooking: Booking) {
     setBooking(newBooking);
