@@ -71,19 +71,6 @@ Open <http://localhost:5173> — pick a resource, choose a date in its timezone,
 
 > Note: task scripts (prisma, seed, test, test:e2e, build…) run inside a workspace app with `pnpm --dir apps/<app> <script>`. Root scripts (`dev`, `build`, `lint`) use pnpm `--filter`/`--parallel` over the workspace.
 
-## Environment variables
-
-| Variable | App | Required | Default | Purpose |
-|----------|-----|----------|---------|---------|
-| `DATABASE_URL` | api | yes | `postgresql://postgres:postgres@127.0.0.1:5435/sistema_reservas?schema=public` | Postgres connection string |
-| `MAIL_HOST` | api | no | — | Local SMTP host (Mailpit in dev). Takes priority over Resend when both are set. |
-| `MAIL_PORT` | api | no | — | Local SMTP port (Mailpit: 1025; no TLS) |
-| `RESEND_API_KEY` | api | no | — | Resend API key. Empty → degraded mode (emails skipped + logged) |
-| `EMAIL_FROM` | api | no | `noreply@resend.dev` | Sender address on booking emails |
-| `VITE_API_BASE_URL` | web | no | *(empty)* | API origin. Empty → same-origin; Vite dev proxies `/api` → `localhost:3000`. Set the deployed origin when building for production. |
-
-Env vars are read lazily at send time from `apps/api/.env` (Prisma loads it at boot). The API port is 3000, hardcoded in `src/main.ts`.
-
 ## Scripts
 
 | Command | What it does |
