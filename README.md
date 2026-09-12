@@ -21,22 +21,6 @@ Booking system for bookable resources (restaurants, meeting rooms, etc.) with ti
 | Database | PostgreSQL 16 (Docker Compose), Prisma ORM |
 | Tooling | pnpm 10 workspaces, Node >= 20, TypeScript 5.7, Jest 29 + Supertest |
 
-## Repository structure
-
-```
-sistema-reservas/
-├── apps/
-│   ├── api/                 # NestJS API (port 3000)
-│   │   ├── prisma/          # schema.prisma + partial-unique-bookings.sql
-│   │   ├── scripts/         # emails.smoke.ts
-│   │   ├── src/             # resources, availability, bookings, email, common
-│   │   └── test/            # e2e specs (real Postgres, self-cleaning)
-│   └── web/                 # React + Vite SPA (port 5173, /api proxy)
-├── packages/
-│   └── shared/              # @sistema-reservas/shared — email templates + types
-└── openspec/                # design docs: specs/ (base) + changes/archive/
-```
-
 ## Prerequisites
 
 - Node.js >= 20
@@ -70,20 +54,6 @@ pnpm dev
 Open <http://localhost:5173> — pick a resource, choose a date in its timezone, and confirm a slot. The API is at <http://localhost:3000/api>.
 
 > Note: task scripts (prisma, seed, test, test:e2e, build…) run inside a workspace app with `pnpm --dir apps/<app> <script>`. Root scripts (`dev`, `build`, `lint`) use pnpm `--filter`/`--parallel` over the workspace.
-
-## Scripts
-
-| Command | What it does |
-|---------|--------------|
-| `pnpm install` | Install + build `@sistema-reservas/shared` (postinstall) |
-| `pnpm dev` | Run API (`nest start --watch`) and web (`vite`) in parallel |
-| `pnpm build` | Build shared package first, then apps (`nest build` / `tsc --noEmit && vite build`) |
-| `pnpm lint` | ESLint for both apps |
-| `pnpm --dir apps/api prisma db push` | Sync Prisma schema to the DB (see Database notes) |
-| `pnpm --dir apps/api seed` | Idempotent seed of 2 resources + schedules |
-| `pnpm --dir apps/api test` | Unit tests (Jest): availability + bookings specs |
-| `pnpm --dir apps/api test:e2e` | E2E specs (Supertest) against the real local Postgres |
-| `pnpm --dir apps/api test:emails` | Email smoke test (template render + timezone formatting) |
 
 ## Testing
 
